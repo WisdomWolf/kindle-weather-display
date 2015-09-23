@@ -18,8 +18,8 @@ except ImportError:
 # Geographic location
 #
 
-latitude = 39.3286
-longitude = -76.6169
+latitude = 35.1975
+longitude = -80.8345
 
 
 
@@ -62,7 +62,7 @@ day_one = datetime.datetime.strptime(xml_day_one, '%Y-%m-%d')
 #
 
 # Open SVG to process
-output = codecs.open('weather-script-preprocess.svg', 'r', encoding='utf-8').read()
+output = codecs.open('weather-script-preprocess_pw.svg', 'r', encoding='utf-8').read()
 
 # Insert icons and temperatures
 output = output.replace('ICON_ONE',icons[0]).replace('ICON_TWO',icons[1]).replace('ICON_THREE',icons[2]).replace('ICON_FOUR',icons[3])
