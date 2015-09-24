@@ -14,6 +14,9 @@ try:
 except ImportError:
     # Python 2
     from urllib2 import urlopen
+    
+LATITUDE = 39.3286
+LONGITUDE = -76.6169
 
 
 def fetch_weather_data(latitude, longitude):
@@ -69,14 +72,31 @@ def run_cmd(cmd):
     output = process.communicate()[0]
     return output
 
-LATITUDE = 39.3286
-LONGITUDE = -76.6169
 
-weather_data = fetch_weather_data(LATITUDE, LONGITUDE)
-highs,lows = parse_temperatures(weather_data)
-icons = parse_icons(weather_data)
-day_one = parse_dates(weather_data)
-process_svg(highs, lows, icons)
+def create_png():
+    weather_data = fetch_weather_data(LATITUDE, LONGITUDE)
+    highs,lows = parse_temperatures(weather_data)
+    icons = parse_icons(weather_data)
+    day_one = parse_dates(weather_data)
+    process_svg(highs, lows, icons)
 
-run_cmd("rsvg-convert --background-color=white -o weather-script.png weather-script-output.svg")
-run_cmd("pngcrush -c 0 -ow weather-script.png weather-script-output.png")
+    run_cmd("rsvg-convert --background-color=white -o weather-script.png weather-script-output.svg")
+    run_cmd("pngcrush -c 0 -ow weather-script.png weather-script-output.png")
+    
+def wait_for_next_minute(current=time.strftime('%M', time.localtime())):
+    while True:
+        if time.strftime('%M', time.localtime()) == current:
+            continue
+        else:
+            create_png()
+            efficient_time_update()
+            break
+
+def efficient_time_update():
+    while True:
+        time.sleep(60)
+        create_png()
+    
+create_png()
+wait_for_next_minute()
+    
