@@ -84,7 +84,9 @@ def create_png():
 
     run_cmd("rsvg-convert --background-color=white -o weather-script.png weather-script-output.svg")
     run_cmd("pngcrush -c 0 -ow weather-script.png weather-script-output.png")
+    run_cmd("scp /home/pi/kindle-weather-display/server/weather-script-output.png kindle:/mnt/us/weather/weather-script-output.png")
     
+
 def wait_for_next_minute(current=time.strftime('%M', time.localtime())):
     while True:
         if time.strftime('%M', time.localtime()) == current:
