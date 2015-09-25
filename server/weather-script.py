@@ -60,7 +60,7 @@ def process_svg(highs, lows, icons):
 
     # Insert icons and temperatures
     output = output.replace('ICON_TWO',icons[0])
-    output = output.replace('HIGH',str(highs[0])).replace('PI_TEMP', get_pi_temp()).replace('REMOTE_TEMP', get_remote_arduino_temp())
+    output = output.replace('HIGH',str(highs[0])).replace('PI_TEMP', str(get_pi_temp())).replace('REMOTE_TEMP', str(get_remote_arduino_temp()))
     output = output.replace('LOW',str(lows[0])).replace('REMOTE_HUM','100')
 
     # Set Clock
