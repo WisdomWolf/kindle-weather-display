@@ -60,7 +60,7 @@ def process_svg(highs, lows, icons):
 
     # Insert icons and temperatures
     output = output.replace('ICON_TWO',icons[0])
-    output = output.replace('HIGH',str(highs[0])).replace('PI_TEMP','74').replace('REMOTE_TEMP','68')
+    output = output.replace('HIGH',str(highs[0])).replace('PI_TEMP', get_pi_temp()).replace('REMOTE_TEMP', get_remote_arduino_temp())
     output = output.replace('LOW',str(lows[0])).replace('REMOTE_HUM','100')
 
     # Set Clock
@@ -86,6 +86,12 @@ def create_png():
     run_cmd("pngcrush -c 0 -ow weather-script.png weather-script-output.png")
     run_cmd("scp /home/pi/kindle-weather-display/server/weather-script-output.png kindle:/mnt/us/weather/weather.png")
     print("Uploading png. {0}".format(time.strftime("%c", time.localtime())))
+    
+def get_pi_temp():
+    return 74
+    
+def get_remote_arduino_temp():
+    return 68
     
 
 def wait_for_next_minute(current=time.strftime('%M', time.localtime())):
