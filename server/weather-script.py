@@ -117,6 +117,6 @@ def efficient_time_update():
         else:
             create_png(False)
     
-create_png()
+create_png(True)
 wait_for_next_minute()
     
