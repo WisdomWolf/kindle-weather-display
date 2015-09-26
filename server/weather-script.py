@@ -53,15 +53,17 @@ def parse_dates(dom):
     xml_day_one = dom.getElementsByTagName('start-valid-time')[0].firstChild.nodeValue[0:10]
     return datetime.datetime.strptime(xml_day_one, '%Y-%m-%d')
 
-def process_svg(highs, lows, icons):
-
+def process_svg(highs, lows, icons, include_forecast=False):
+    
     # Open SVG to process
     output = codecs.open('weather-script-base.svg', 'r', encoding='utf-8').read()
-
-    # Insert icons and temperatures
-    output = output.replace('ICON_TWO',icons[0])
-    output = output.replace('HIGH',str(highs[0])).replace('PI_TEMP', str(get_pi_temp())).replace('REMOTE_TEMP', str(get_remote_arduino_temp()))
-    output = output.replace('LOW',str(lows[0])).replace('REMOTE_HUM','100')
+    if include_forecast:
+        # Insert icons and temperatures
+        output = output.replace('ICON_TWO',icons[0])
+        output = output.replace('HIGH',str(highs[0])).replace('LOW',str(lows[0]))
+                
+    output = output.replace('PI_TEMP', str(get_pi_temp())).replace('REMOTE_TEMP', str(get_remote_arduino_temp()))
+    output = output.replace('REMOTE_HUM','100')
 
     # Set Clock
     output = output.replace('CLOCK',time.strftime('%I:%M %p', time.localtime()).lstrip('0'))
@@ -74,13 +76,14 @@ def run_cmd(cmd):
     output = process.communicate()[0]
     return output
 
-
-def create_png():
-    weather_data = fetch_weather_data(LATITUDE, LONGITUDE)
-    highs,lows = parse_temperatures(weather_data)
-    icons = parse_icons(weather_data)
-    day_one = parse_dates(weather_data)
-    process_svg(highs, lows, icons)
+def create_png(include_forecast=False):
+    if include_forecast:
+        weather_data = fetch_weather_data(LATITUDE, LONGITUDE)
+        highs,lows = parse_temperatures(weather_data)
+        icons = parse_icons(weather_data)
+        day_one = parse_dates(weather_data)
+        
+    process_svg(highs, lows, icons, include_forecast)
 
     run_cmd("rsvg-convert --background-color=white -o weather-script.png weather-script-output.svg")
     run_cmd("pngcrush -c 0 -ow weather-script.png weather-script-output.png")
@@ -106,7 +109,11 @@ def wait_for_next_minute(current=time.strftime('%M', time.localtime())):
 def efficient_time_update():
     while True:
         time.sleep(60)
-        create_png()
+        this_minute = time.strftime('%M', time.localtime()) 
+        if this_minute == 0:
+            create_png(True)
+        else:
+            create_png(False)
     
 create_png()
 wait_for_next_minute()
