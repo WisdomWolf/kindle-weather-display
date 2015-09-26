@@ -55,7 +55,6 @@ def parse_dates(dom):
 
 def process_svg(highs, lows, icons, include_forecast=False):
     
-    
     if include_forecast:
         # Open SVG to process (should add check for its existence and update base if not exist
         output = codecs.open('weather-script-base.svg', 'r', encoding='utf-8').read()
@@ -64,7 +63,7 @@ def process_svg(highs, lows, icons, include_forecast=False):
         output = output.replace('HIGH',str(highs[0])).replace('LOW',str(lows[0]))
     else:
         # Open SVG to process (should add check for its existence and update base if not exist
-        output = codecs.open('weather-script-output.svg', 'r', encoding='utf-8').read()
+        output = codecs.open('weather-script-output.svg', 'r+', encoding='utf-8').read()
 
     output = output.replace('PI_TEMP', str(get_pi_temp())).replace('REMOTE_TEMP', str(get_remote_arduino_temp()))
     output = output.replace('REMOTE_HUM','100')
