@@ -72,7 +72,7 @@ def process_svg(highs, lows, icons, include_forecast=False):
     output = output.replace('CLOCK',time.strftime('%I:%M %p', time.localtime()).lstrip('0'))
 
     # Write output
-    codecs.open('weather-script-output.svg', 'w', encoding='utf-8').write(output)
+    codecs.open('weather-script-output.svg', 'w+', encoding='utf-8').write(output)
     
 def run_cmd(cmd):
     process = Popen(cmd.split(), stdout=PIPE)
