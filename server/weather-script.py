@@ -19,6 +19,9 @@ except ImportError:
     
 LATITUDE = 39.3286
 LONGITUDE = -76.6169
+LAST_HIGHS = 0
+LAST_LOWS = 0
+LAST_ICONS = None
 
 
 def fetch_weather_data(latitude, longitude):
@@ -55,15 +58,10 @@ def parse_dates(dom):
 
 def process_svg(highs, lows, icons, include_forecast=False):
     
-    if include_forecast:
-        # Open SVG to process (should add check for its existence and update base if not exist
-        output = codecs.open('weather-script-base.svg', 'r', encoding='utf-8').read()
-        # Insert icons and temperatures
-        output = output.replace('ICON_TWO',icons[0])
-        output = output.replace('HIGH',str(highs[0])).replace('LOW',str(lows[0]))
-    else:
-        # Open SVG to process (should add check for its existence and update base if not exist
-        output = codecs.open('weather-script-output.svg', 'r+', encoding='utf-8').read()
+    output = codecs.open('weather-script-base.svg', 'r', encoding='utf-8').read()
+    # Insert icons and temperatures
+    output = output.replace('ICON_TWO',icons[0])
+    output = output.replace('HIGH',str(highs[0])).replace('LOW',str(lows[0]))
 
     output = output.replace('PI_TEMP', str(get_pi_temp())).replace('REMOTE_TEMP', str(get_remote_arduino_temp()))
     output = output.replace('REMOTE_HUM','100')
@@ -72,7 +70,7 @@ def process_svg(highs, lows, icons, include_forecast=False):
     output = output.replace('CLOCK',time.strftime('%I:%M %p', time.localtime()).lstrip('0'))
 
     # Write output
-    codecs.open('weather-script-output.svg', 'w+', encoding='utf-8').write(output)
+    codecs.open('weather-script-output.svg', 'w', encoding='utf-8').write(output)
     
 def run_cmd(cmd):
     process = Popen(cmd.split(), stdout=PIPE)
@@ -80,19 +78,22 @@ def run_cmd(cmd):
     return output
 
 def create_png(include_forecast=False):
+    global LAST_HIGHS, LAST_LOWS, LAST_ICONS
     if include_forecast:
         weather_data = fetch_weather_data(LATITUDE, LONGITUDE)
-        highs,lows = parse_temperatures(weather_data)
-        icons = parse_icons(weather_data)
+        LAST_HIGHS,LAST_LOWS = highs,lows = parse_temperatures(weather_data)
+        LAST_ICONS = icons = parse_icons(weather_data)
         day_one = parse_dates(weather_data)
     else:
-        highs,lows,icons= None,None,None
+        highs,lows,icons= LAST_HIGHS,LAST_LOWS,LAST_ICONS
         
     process_svg(highs, lows, icons, include_forecast)
-
-    run_cmd("rsvg-convert --background-color=white -o weather-script.png weather-script-output.svg")
-    run_cmd("pngcrush -c 0 -ow weather-script.png weather-script-output.png")
-    run_cmd("scp /home/pi/kindle-weather-display/server/weather-script-output.png kindle:/mnt/us/weather/weather.png")
+    
+    if os.name == 'posix':
+        run_cmd("rsvg-convert --background-color=white -o weather-script.png weather-script-output.svg")
+        run_cmd("pngcrush -c 0 -ow weather-script.png weather-script-output.png")
+        run_cmd("scp /home/pi/kindle-weather-display/server/weather-script-output.png kindle:/mnt/us/weather/weather.png")
+    
     print("Uploading png. {0}".format(time.strftime("%c", time.localtime())))
     
 def get_pi_temp():
