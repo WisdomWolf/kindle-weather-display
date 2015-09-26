@@ -82,6 +82,8 @@ def create_png(include_forecast=False):
         highs,lows = parse_temperatures(weather_data)
         icons = parse_icons(weather_data)
         day_one = parse_dates(weather_data)
+    else:
+        highs,lows,icons= None,None,None
         
     process_svg(highs, lows, icons, include_forecast)
 
