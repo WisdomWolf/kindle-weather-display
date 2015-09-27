@@ -3,7 +3,8 @@
 FRONTLIGHTDEVICE=/sys/devices/system/fl_tps6116x/fl_tps6116x0/fl_intensity
 FRAMEWORK=$(ps -A | grep framework)
 
-if [ -z "$FRAMEWORK" ] ; then
+if [ "$FRAMEWORK" != "" ] ; then
+	echo "killing framework..."
 	stop lab126_gui
 fi
 
