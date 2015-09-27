@@ -93,6 +93,7 @@ def create_png(include_forecast=False):
         run_cmd("rsvg-convert --background-color=white -o weather-script.png weather-script-output.svg")
         run_cmd("pngcrush -c 0 -ow weather-script.png weather-script-output.png")
         run_cmd("scp /home/pi/kindle-weather-display/server/weather-script-output.png kindle:/mnt/us/weather/weather.png")
+	run_cmd("cp /home/pi/kindle-weather-display/weather-script-output.png /var/www/images/weather-script-output.png")
     
     print("Uploading png. {0}".format(time.strftime("%c", time.localtime())))
     
