@@ -114,7 +114,7 @@ def wait_for_next_minute(current=time.strftime('%M', time.localtime())):
 
 def efficient_time_update():
     while True:
-        time.sleep(60)
+        time.sleep(56)
         this_minute = time.strftime('%M', time.localtime()) 
         if this_minute == 0:
             create_png(True)
