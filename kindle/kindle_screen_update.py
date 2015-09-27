@@ -25,6 +25,8 @@ def wait_for_next_minute(current=time.strftime('%M', time.localtime())):
             continue
         else:
             check_for_update()
+            # adding a 10 sec delay to ensure pi has time to update file
+            time.sleep(10)
             efficient_time_update()
             break
 
