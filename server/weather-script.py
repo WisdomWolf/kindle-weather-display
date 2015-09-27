@@ -105,6 +105,8 @@ def get_remote_arduino_temp():
         return round(tempf, 1)
     except URLError:
         return 'ERR'
+    except:
+        return 'N/A'
     
 def get_remote_arduino_humid():
     try:
@@ -112,6 +114,8 @@ def get_remote_arduino_humid():
         return round(hum)
     except URLError:
         return 'ERR'
+    except:
+        return 'N/A'
     
 def wait_for_next_minute(current=time.strftime('%M', time.localtime())):
     while True:
