@@ -12,10 +12,10 @@ import os
 from subprocess import *
 try:
     # Python 3
-    from urllib.request import urlopen
+    from urllib.request import urlopen, URLError
 except ImportError:
     # Python 2
-    from urllib2 import urlopen
+    from urllib2 import urlopen, URLError
     
 LATITUDE = 39.3286
 LONGITUDE = -76.6169
@@ -64,7 +64,7 @@ def process_svg(highs, lows, icons, include_forecast=False):
     output = output.replace('HIGH',str(highs[0])).replace('LOW',str(lows[0]))
 
     output = output.replace('PI_TEMP', str(get_pi_temp())).replace('REMOTE_TEMP', str(get_remote_arduino_temp()))
-    output = output.replace('REMOTE_HUM','100')
+    output = output.replace('REMOTE_HUM', str(get_remote_arduino_humid()))
 
     # Set Clock
     output = output.replace('CLOCK',time.strftime('%I:%M %p', time.localtime()).lstrip('0'))
@@ -100,9 +100,19 @@ def get_pi_temp():
     return 74
     
 def get_remote_arduino_temp():
-    return 68
+    try:
+        tempf = float(urlopen("http://192.168.1.70/tempf").read())
+        return round(tempf, 1)
+    except URLError:
+        return 'ERR'
     
-
+def get_remote_arduino_humid():
+    try:
+        hum = float(urlopen("http://192.168.1.70/humidity").read())
+        return round(hum)
+    except URLError:
+        return 'ERR'
+    
 def wait_for_next_minute(current=time.strftime('%M', time.localtime())):
     while True:
         if time.strftime('%M', time.localtime()) == current:
