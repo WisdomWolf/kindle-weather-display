@@ -136,7 +136,11 @@ def efficient_time_update():
             break
         else:
             create_png(False)
-    
-create_png(True)
-wait_for_next_minute()
+
+def main():    
+	create_png(True)
+	wait_for_next_minute()
+
+if __name__ == "__main__":
+	main()
     
